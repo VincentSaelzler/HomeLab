@@ -38,4 +38,10 @@
 ### Power Supplies
 - 1x 495W
 
-# Lenovo PC
+## pfSense Router (Lenovo PC)
+- Intel Core i3-4130
+- 2GB RAM
+- Network Cards
+  - 1x Integrated Gigabit
+  - 2x PCIe Expansion Intel Gigabit
+- pfSense 2.4.4-RELEASE-p2
