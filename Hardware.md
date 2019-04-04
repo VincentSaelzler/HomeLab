@@ -53,3 +53,8 @@
 ## XenServer (HP Compaq Pro 6300 MT)
 - Intel Core i5-3470
 - 16GB RAM
+- **VMs**
+  - Arch Linux
+    - Docker-Compose
+    - Docker
+    - nginx-reverse proxy (nginx-gen)
