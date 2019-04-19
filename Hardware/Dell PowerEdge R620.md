@@ -1,6 +1,8 @@
-# Dell PowerEdge R620
+# Proxmox | Dell PowerEdge R620
 ## Specifications
-- 2x Intel Xeon E5 2650?
+- 2x Intel Xeon E5 2620
+  - 2.0GHz
+  - 6 Core / 12 Thread
 - 8GB DDR3 1333 ECC (2x4GB)
 - Network Cards
   - 4x 1Gbit
