@@ -18,3 +18,5 @@ This server presents iSCSI targets for the Proxmox machines.
 ## Configuration
 - OS: FreeNAS 11.2-U3
 - Host Name: `freenas0.vnet`
+### UPS (NUT)
+[[https://github.com/VincentSaelzler/HomeLab/blob/master/Images/2019-04-19%20FreeNAS%20NUT%20UPS.PNG]]
