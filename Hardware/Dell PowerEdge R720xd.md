@@ -19,4 +19,7 @@ This server presents iSCSI targets for the Proxmox machines.
 - OS: FreeNAS 11.2-U3
 - Host Name: `freenas0.vnet`
 ### UPS (NUT)
-[[https://github.com/VincentSaelzler/HomeLab/blob/master/Images/2019-04-19%20FreeNAS%20NUT%20UPS.PNG]]
+[Screenshot](https://github.com/VincentSaelzler/HomeLab/blob/master/Images/2019-04-19%20FreeNAS%20NUT%20UPS.PNG)
+- Connects as slave system. (Does **not** command the UPS or other servers to turn off)
+- Master is `pve0.vnet`.
+- Shuts down after 10 minutes of being on battery.
