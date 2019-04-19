@@ -1,4 +1,4 @@
-# Proxmox UPS Master |HP Envy Laptop
+# Proxmox UPS Master | HP Envy Laptop
 ## Role
 There aren't any VMs on this server. It is connected to the UPS via USB cable, and helps facilitate clean shutdown of the VMs and iSCSI targets on other machines.
 ## Configuration
