@@ -16,6 +16,60 @@
 ## Configuration
 - OS: Proxmox 5.4-1
 - Host Name: `pve1.vnet`
+## Storage
+```
+# cat /etc/pve/storage.cfg
+dir: local
+        path /var/lib/vz
+        content iso,backup,vztmpl
+
+lvmthin: local-lvm
+        thinpool data
+        vgname pve
+        content images,rootdir
+
+cifs: old-fn-misc
+        path /mnt/pve/old-fn-misc
+        server 192.168.27.202
+        share misc
+        content backup
+        domain vnet
+        maxfiles 1
+
+iscsi: iscsi-6g
+        portal 192.168.27.217
+        target iqn.2005-10.org.freenas.ctl:fn-tgt
+        content none
+
+lvm: lvm-0
+        vgname vg-0
+        base iscsi-6g:0.0.0.scsi-36589cfc000000a83464ed85b41b7cdad
+        content rootdir,images
+        shared 1
+```
+## Network
+```
+# cat /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+iface eno1 inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+        address 192.168.27.216
+        netmask 255.255.255.0
+        gateway 192.168.27.1
+        bridge_ports eno1
+        bridge_stp off
+        bridge_fd 0
+
+iface eno2 inet manual
+
+iface eno3 inet manual
+
+iface eno4 inet manual
+```
 ### NUT
 This server is the first one to shut down. It is a "slave" server, despite being connected directly to the UPS.
 #### NUT Configuration Files
