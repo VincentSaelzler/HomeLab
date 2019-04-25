@@ -17,26 +17,62 @@
 - OS: Proxmox 5.4-1
 - Host Name: `pve1.vnet`
 ### NUT
-This server is the first one to shut down. It is a "slave" server to `pve0.vnet`
+This server is the first one to shut down. It is a "slave" server, despite being connected directly to the UPS.
 #### NUT Configuration Files
-The files that came by default with the installation of the nut package are stored, for backup purposes, in the `templates` directory.
+*NUT can be particular about file permissions and ownership. I suggest matching these carefully.*
 
-*NUT can be particular about file permissions. I suggest matching these carefully.*
+File Listing:
 ```
 # ls -l /etc/nut/
-total 16
--rw-r--r-- 1 root nut   15 Apr 15 23:24 nut.conf
-drwxr-xr-x 2 root nut 4096 Apr 15 23:22 templates
--rw-r--r-- 1 root nut 1069 Apr 15 23:31 upsmon.conf
--rw-r--r-- 1 root nut  324 Apr 16 00:18 upssched.conf
+total 24
+-rw-r----- 1 root nut   15 Apr 24 19:27 nut.conf
+-rw-r----- 1 root nut  109 Apr 24 19:27 ups.conf
+-rw-r----- 1 root nut   20 Apr 24 19:28 upsd.conf
+-rw-r----- 1 root nut  203 Apr 24 19:31 upsd.users
+-rw-r----- 1 root nut 1069 Apr 24 20:40 upsmon.conf
+-rw-r----- 1 root nut  326 Apr 24 21:19 upssched.conf
+
 ```
+```
+# ls -l /bin/upssched-cmd
+-rwxr-xr-x 1 root root 601 Apr 24 19:37 /bin/upssched-cmd
+```
+File Contents:
 ```
 # cat /etc/nut/nut.conf
-MODE=netclient
+MODE=netserver
+```
+```
+# cat /etc/nut/ups.conf
+[old-smart-1500]
+    driver = usbhid-ups
+    port = auto
+    desc = "The APC UPS at the bottom of the rack."
+```
+```
+# cat /etc/nut/upsd.conf
+LISTEN 0.0.0.0 3493
+```
+*The admin and ups-master entries are not required.*
+
+```
+# cat /etc/nut/upsd.users
+[ups-master]
+    password = YOURMASTERPW
+    upsmon master
+
+[ups-slave]
+    password = YOURSLAVEPW
+    upsmon slave
+
+[admin]
+    password = YOURADMINPW
+    actions = set
+    instcmds = all
 ```
 ```
 # cat /etc/nut/upsmon.conf
-MONITOR old-smart-1500@pve0.vnet 1 ups-slave YOURSLAVEPW slave
+MONITOR old-smart-1500@pve1.vnet 1 ups-slave YOURSLAVEPW slave
 MINSUPPLIES 1
 
 SHUTDOWNCMD "/sbin/shutdown -h +0"
@@ -72,30 +108,19 @@ RBWARNTIME 43200
 NOCOMMWARNTIME 300
 FINALDELAY 5
 ```
-```
+```co
 # cat /etc/nut/upssched.conf
 CMDSCRIPT /bin/upssched-cmd
 PIPEFN /var/run/nut/upssched.pipe
 LOCKFN /var/run/nut/upssched.lock
 
-AT ONBATT old-smart-1500@pve0.vnet EXECUTE ups-on-batt
-AT ONLINE old-smart-1500@pve0.vnet EXECUTE ups-on-line
+AT ONBATT old-smart-1500@pve1.vnet EXECUTE ups-on-batt
+AT ONLINE old-smart-1500@pve1.vnet EXECUTE ups-on-line
 
-AT ONBATT old-smart-1500@pve0.vnet START-TIMER turn-off 30
-AT ONLINE old-smart-1500@pve0.vnet CANCEL-TIMER turn-off
-root@pve1:~# nano /etc/nut/upssched.conf
-root@pve1:~# cat /etc/nut/upssched.conf
-CMDSCRIPT /bin/upssched-cmd
-PIPEFN /var/run/nut/upssched.pipe
-LOCKFN /var/run/nut/upssched.lock
-
-AT ONBATT old-smart-1500@pve0.vnet EXECUTE ups-on-batt
-AT ONLINE old-smart-1500@pve0.vnet EXECUTE ups-on-line
-
-AT ONBATT old-smart-1500@pve0.vnet START-TIMER turn-off 300
-AT ONLINE old-smart-1500@pve0.vnet CANCEL-TIMER turn-off
+AT ONBATT old-smart-1500@pve1.vnet START-TIMER turn-off 300
+AT ONLINE old-smart-1500@pve1.vnet CANCEL-TIMER turn-off
 ```
-```
+```shell
 # cat /bin/upssched-cmd
 #! /bin/sh
 #
