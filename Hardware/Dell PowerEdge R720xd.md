@@ -21,6 +21,12 @@ This server presents iSCSI targets for the Proxmox machines.
 ## Configuration
 - OS: FreeNAS 11.2-U3
 - Host Name: `freenas0.vnet`
+### Storage Pools
+iSCSI is backed by a 4 TB RAID 10 array. Has 4 stripes of mirrored drive pairs. Total of 8 active 1 TB drives. There is also an additional hot spare.
+
+OS runs on a 20 GB single drive. No RAID or anything. FreeNAS is often run on a flash drive, but having 24 2.5" slots on the front of the server, I was fine using a drive for the OS.
+
+NFS backup storage is one mirrored pair of 500 GB HDDs.
 ### UPS (NUT)
 The configuration is done in the GUI. It auto generates the NUT configuration files. *Changing these files manually is discouraged, because any changes will be overwritten by FreeNAS.* Including here just for reference.
 
