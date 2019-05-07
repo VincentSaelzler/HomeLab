@@ -17,35 +17,36 @@
 - OS: Proxmox 5.4-1
 - Host Name: `pve1.vnet`
 ## Storage
+Configure storage. Do not copy/paste the `lvm: iscsi-lvm` section. Manually re-add.
 ```
 # cat /etc/pve/storage.cfg
 dir: local
         path /var/lib/vz
-        content iso,backup,vztmpl
+        content vztmpl,iso,backup
 
 lvmthin: local-lvm
         thinpool data
         vgname pve
         content images,rootdir
 
-cifs: old-fn-misc
-        path /mnt/pve/old-fn-misc
-        server 192.168.27.202
-        share misc
-        content backup
-        domain vnet
-        maxfiles 1
-
-iscsi: iscsi-6g
+iscsi: iscsi-base0
         portal 192.168.27.217
-        target iqn.2005-10.org.freenas.ctl:fn-tgt
+        target iqn.2005-10.org.freenas.ctl:tgt0
         content none
 
-lvm: lvm-0
-        vgname vg-0
-        base iscsi-6g:0.0.0.scsi-36589cfc000000a83464ed85b41b7cdad
+lvm: iscsi-lvm0
+        vgname vg0
+        base iscsi-base0:0.0.0.scsi-36589cfc000000b5ef4a4bc5bd74dcf96
         content rootdir,images
-        shared 1
+        shared 0
+
+nfs: nfs-backup0
+        export /mnt/fileshare-tank0/fileshare-dataset0
+        path /mnt/pve/nfs-backup0
+        server 192.168.27.217
+        content backup
+        maxfiles 7
+        options vers=3
 ```
 ## Network
 ```

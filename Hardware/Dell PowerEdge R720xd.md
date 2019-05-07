@@ -9,18 +9,25 @@ This server presents iSCSI targets for the Proxmox machines.
 - Network Cards
   - 4x 1Gbit
 - RAID / HBA Cards
-  - Dell PERC H310 (Original IR Firmware)
+  - Dell PERC H310 (Flashed IT Firmware)
 - Hard Drives
-  - 24x 2.5" Drive Backplane (disconnected, missing cable)
-  - 16x Empty Bays
+  - 24x 2.5" Drive Backplane
+  - 9x 1 TB Laptop Drives (Mixed Vendors, some 5400 RPM, some 7200 RPM)
+  - 1x 20 GB HDD (Originally from Xbox 360)
+  - 2x 500GB Laptop HDDs. 
+  - 4x Empty Bays
   - 8x Blanks
 - 2x 750W (redundant) Power Supplies
 ## Configuration
 - OS: FreeNAS 11.2-U3
 - Host Name: `freenas0.vnet`
-### UPS (NUT)
-This server is the first one to shut down. It is a "slave" server.
+### Storage Pools
+iSCSI is backed by a 4 TB RAID 10 array. Has 4 stripes of mirrored drive pairs. Total of 8 active 1 TB drives. There is also an additional hot spare.
 
+OS runs on a 20 GB single drive. No RAID or anything. FreeNAS is often run on a flash drive, but having 24 2.5" slots on the front of the server, I was fine using a drive for the OS.
+
+NFS backup storage is one mirrored pair of 500 GB HDDs.
+### UPS (NUT)
 The configuration is done in the GUI. It auto generates the NUT configuration files. *Changing these files manually is discouraged, because any changes will be overwritten by FreeNAS.* Including here just for reference.
 
 File Listing:
