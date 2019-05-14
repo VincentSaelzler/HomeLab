@@ -27,7 +27,30 @@ iSCSI is backed by a 4 TB RAID 10 array. Has 4 stripes of mirrored drive pairs. 
 OS runs on a 20 GB single drive. No RAID or anything. FreeNAS is often run on a flash drive, but having 24 2.5" slots on the front of the server, I was fine using a drive for the OS.
 
 NFS backup storage is one mirrored pair of 500 GB HDDs.
+
+### Mounting from Client
+
+Sometimes, the details can be tricky.
+
+#### Mounting NFS from Ubuntu 16.04 LTS.
+```
+adminvince@bitcoin0:~$ sudo apt install nfs-common
+adminvince@bitcoin0:~$ sudo mount freenas0.vnet:/mnt/fileshare-tank0/fileshare-dataset0 /mnt
+```
+#### Mounting SMB from Ubuntu 16.04 LTS.
+This was a bit trickier. I'm not exactly sure which package(s), if any, were actually required.
+```
+adminvince@bitcoin0:~$ sudo apt install smbclient
+adminvince@bitcoin0:~$ sudo apt install cifs-utils
+```
+
+The password and username shouldn't matter. **The version 3.0 specification is extremely important!** Ubuntu's client seems to default to 1.0, and that version is disabled on the FreeNAS server.
+```
+adminvince@bitcoin0:~$ sudo mount -t cifs -o vers=3.0 //freenas0.vnet/smb-dataset0 /mnt/
+Password for root@//freenas0.vnet/smb-dataset0: ***
+```
 ### UPS (NUT)
+
 The configuration is done in the GUI. It auto generates the NUT configuration files. *Changing these files manually is discouraged, because any changes will be overwritten by FreeNAS.* Including here just for reference.
 
 File Listing:
@@ -37,6 +60,7 @@ total 8
 -r--r-----  1 root  uucp  480 Apr 24 16:50 upsmon.conf
 -r--r-----  1 root  uucp  430 Apr 24 16:50 upssched.conf
 ```
+
 ```
 # ls -l /usr/local/bin/custom-upssched-cmd
 -rwxr-xr-x  1 root  wheel  1065 Apr 15 19:46 /usr/local/bin/custom-upssched-cmd
@@ -58,6 +82,7 @@ NOTIFYFLAG SHUTDOWN SYSLOG+EXEC
 SHUTDOWNCMD "/sbin/shutdown -p now"
 POWERDOWNFLAG /etc/nokillpower
 ```
+
 ```
 # cat /etc/local/nut/upssched.conf
 CMDSCRIPT   /usr/local/bin/custom-upssched-cmd
@@ -117,4 +142,8 @@ case $1 in
 esac
 
 done
+```
+
+```
+
 ```
